@@ -6,6 +6,10 @@ import {
   Patch,
   Param,
   Delete,
+  Res,
+  HttpStatus,
+  HttpCode,
+  BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -21,15 +25,21 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Res() res) {
+    const users = this.usersService.findAll();
+    return res.status(200).send(users);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
+    if (+id < 1) {
+      throw new BadRequestException('id는 0보다 큰 값이어야 합니다.');
+    }
+
     return this.usersService.findOne(+id);
   }
 
+  @HttpCode(HttpStatus.ACCEPTED)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
