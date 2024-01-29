@@ -10,18 +10,41 @@ import {
   HttpStatus,
   HttpCode,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  VerifyEmailDto,
+  UserLoginDto,
+} from './dto/user.dto';
+import { UserInfo } from './UserInfo';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<void> {
+    const { name, email, password } = createUserDto;
+    console.log(name, email, password);
+    return;
+    // return await this.usersService.create(createUserDto);
+  }
+
+  @Post('verify-email')
+  async verifyEmail(@Query() verifyEmailDto: VerifyEmailDto): Promise<string> {
+    console.log(verifyEmailDto);
+    return;
+    // return await this.usersService.create(createUserDto);
+  }
+
+  @Post('login')
+  async login(@Query() userLoginDto: UserLoginDto): Promise<string> {
+    console.log(userLoginDto);
+    return;
+    // return await this.usersService.create(createUserDto);
   }
 
   @Get()
@@ -31,12 +54,13 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<UserInfo> {
     if (+id < 1) {
       throw new BadRequestException('id는 0보다 큰 값이어야 합니다.');
     }
 
-    return this.usersService.findOne(+id);
+    // return this.usersService.findOne(+id);
+    return;
   }
 
   @HttpCode(HttpStatus.ACCEPTED)
